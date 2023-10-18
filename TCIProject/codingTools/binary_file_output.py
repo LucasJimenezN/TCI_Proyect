@@ -38,21 +38,12 @@ class binary_file_output:
 
     #write the value employing the bits of num_of_bits. It employs the write_bit(self,bit)
     def write_value(self, value, num_of_bits):
-        # Comprobamos que no haya error
-        necessary_bits = math.ceil(math.log2(value))     
-        
-        if (necessary_bits > num_of_bits):
-            raise ValueError(f"El valor {value} no se puede representar con {num_of_bits} bits")
-        else:
-            aux_value = 1
-            for x in range(num_of_bits, 0):
-                print(value & (aux_value<<x))
-                if (value & (aux_value<<x)) == 0:
-                    print("0")
-                    # self.write_bit(0)
-                else:
-                    print("1")
-                    #self.write_bit(1)
+        for i in range(num_of_bits):
+            bit = (value >> (num_of_bits - 1 - i)) & 1
+            self.write_bit(bit)
+        #value >> (num_of_bits - 1 - i): Desplaza value hacia la derecha para asegurarnos de obtener el bit correcto. 
+        #La cantidad de desplazamientos es determinada por num_of_bits - 1 - i.
+        #Esto nos permite obtener el bit en la posición i desde el bit más significativo.
             
 
 
