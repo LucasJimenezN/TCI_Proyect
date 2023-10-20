@@ -6,7 +6,7 @@ import numpy
 class load_image_raw:
     
      #constructor. file_name is the path of the file
-    def __init__(self, image_name, components, columns, rows, datatype):
+    def __init__(self, image_name, components, rows, columns, datatype):
         self.image_name = image_name
         self.components = components
         self.columns = columns
