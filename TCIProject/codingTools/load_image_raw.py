@@ -30,5 +30,5 @@ class load_image_raw:
         return self.components * self.columns * self.rows * bytes_sample
     
     def get_image_structure_empty(self):
-        return numpy.zeros((self.components, self.columns, self.rows))
+        return numpy.zeros((self.components, self.rows, self.columns))
         
