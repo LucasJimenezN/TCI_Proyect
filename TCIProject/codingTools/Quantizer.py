@@ -16,7 +16,8 @@ class Quantizer:
         for z in range(image_data.shape[0]):
             for y in range(image_data.shape[1]):
                 for x in range(image_data.shape[2]):
-                    image_data_quantized[z][y][x] = int( (image_data[z][y][x] / self.quantization_step) * sign_of_value(image_data[z][y][x]))                
+                    image_data_quantized[z][y][x] = int( ((abs(image_data[z][y][x])) / self.quantization_step)) * sign_of_value(image_data[z][y][x])
+        print(f"Check Quantize: {image_data_quantized}")
         
     #dequantize
     def dequantize(self, image_data_quantized, image_data_reconstructed):

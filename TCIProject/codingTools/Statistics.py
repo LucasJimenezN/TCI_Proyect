@@ -58,9 +58,6 @@ class statistics:
             prob_entropy = probability * math.log2(probability)
             
             self.entropy -= prob_entropy
-            
 
-        print("Max Value: ", self.max_value)
-        print("Min Value: ", self.min_value)
         return self.entropy
     

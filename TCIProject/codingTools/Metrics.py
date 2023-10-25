@@ -52,13 +52,13 @@ class Metrics:
         return max_value
     
     def calculate_mse(self):
-        # MSE(I,IQ) = (1/Ni*Nj) * |Xij - Xij^|
-        equation_1st_part = 1 / (self.original_image_rows * self.original_image_columns)
+        # MSE(I,IQ) = (1/Ni*Nj) * |Xij - Xij^|^2
+        equation_1st_part = 1 / (self.original_image_rows * self.original_image_columns * self.original_image_components)
         sumatori = 0
         for z in range(self.original_image_components):
             for y in range(self.original_image_rows):
                 for x in range(self.original_image_columns):
-                    sumatori = sumatori + abs(self.original_image[z][y][x] - self.reconstructed_image[z][y][x])
+                    sumatori = sumatori + pow(abs(self.original_image[z][y][x] - self.reconstructed_image[z][y][x]), 2)
         result = equation_1st_part * sumatori
         self.MSE = result
         return result
