@@ -77,6 +77,34 @@ class Wavelet:
         return X_prime
 
     def handle_transform_forward(self):
-        for z in range(self.image_components):
-            for y in range(self.image.shape(1)):
-                print(f"Fila 1: {self.image[z][y]}")
+        array_mat = []
+        img_aux = self.image[0]
+        ret_img = np.empty((len(img_aux),len(img_aux)), dtype=np.int16)
+        for i in range(0, self.levels):
+            aux = self.handle_transform_forward_rec(img_aux)
+            ret_img[:len(aux), :len(aux)] = aux
+            mitad = aux.shape[0] // 2
+            img_aux = aux[:mitad, :mitad]
+
+        # Bucle for de juntar todas las matrices
+
+        return(ret_img)
+
+    def handle_transform_forward_rec(self, image):
+        len_original_img = len(image)
+        transformed_mat = np.empty((len_original_img,len_original_img), dtype=np.int16)
+        # Filas
+        for i, fila in enumerate(image):
+            aux = self.s_tranform_forward(fila)
+            transformed_mat[i] = aux
+
+        # Columnas
+        transformed_mat_T = transformed_mat.T
+        for i, columna in enumerate(transformed_mat_T):
+            aux = self.s_tranform_forward(columna)
+            transformed_mat_T[i] = aux
+
+        # Transponer de nuevo para obtener la matriz final
+        final_mat = transformed_mat_T.T
+
+        return final_mat
