@@ -77,7 +77,6 @@ class Wavelet:
         return X_prime
 
     def handle_transform_forward(self):
-        array_mat = []
         img_aux = self.image[0]
         ret_img = np.empty((len(img_aux),len(img_aux)), dtype=np.int16)
         for i in range(0, self.levels):
@@ -108,3 +107,45 @@ class Wavelet:
         final_mat = transformed_mat_T.T
 
         return final_mat
+
+    def handle_transform_inverse(self):
+        original_img = self.image
+
+        for i in range((self.levels-1), -1, -1):
+            length = int(len(self.image) / pow(2, i))
+
+            mat_aux = np.zeros((length, length), dtype=np.int16)
+
+            mat_aux[:length, :length] = original_img[:length, :length]
+            aux = self.handle_transform_inverse_rec(mat_aux)
+            original_img[:length, :length] = aux
+
+        return original_img
+
+    # Caso 1 ( 1 level )
+    # 512 -> length = 512,
+    # Caso 2 ( 2 levels )
+    # 512 -> length = 256 -> length = 512
+    # Caso 4 ( 4 levels ) -> 3 - 2 - 1 - 0
+    # 512 -> 64 ->
+
+    def handle_transform_inverse_rec(self, image):
+        len_original_img = len(image)
+        transformed_mat = np.empty((len_original_img,len_original_img), dtype=np.int16)
+        # Filas
+        for i, fila in enumerate(image):
+            aux = self.s_transform_inverse(fila)
+            transformed_mat[i] = aux
+
+        # Columnas
+        transformed_mat_T = transformed_mat.T
+        for i, columna in enumerate(transformed_mat_T):
+            aux = self.s_transform_inverse(columna)
+            transformed_mat_T[i] = aux
+
+        # Transponer de nuevo para obtener la matriz final
+        final_mat = transformed_mat_T.T
+
+        return final_mat
+
+#%%
