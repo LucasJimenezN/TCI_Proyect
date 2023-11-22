@@ -99,13 +99,13 @@ class Wavelet:
         print(f"Longitud forward: {len(transformed_mat)}")
 
         # Columnas
-#        transformed_mat_T = transformed_mat.T
-#        for i, columna in enumerate(transformed_mat_T):
-#            aux = self.s_tranform_forward(columna)
-#            transformed_mat_T[i] = aux
+        transformed_mat_T = transformed_mat.T
+        for i, columna in enumerate(transformed_mat_T):
+            aux = self.s_tranform_forward(columna)
+            transformed_mat_T[i] = aux
 
         # Transponer de nuevo para obtener la matriz final
-#        final_mat = transformed_mat_T.T
+        final_mat = transformed_mat_T.T
         final_mat = transformed_mat
         return final_mat
 
@@ -141,13 +141,13 @@ class Wavelet:
             transformed_mat[i] = aux
 
         # Columnas
-#        transformed_mat_T = transformed_mat.T
-#        for i, columna in enumerate(transformed_mat_T):
-#            aux = self.s_transform_inverse(columna)
-#            transformed_mat_T[i] = aux
+        transformed_mat_T = transformed_mat.T
+        for i, columna in enumerate(transformed_mat_T):
+            aux = self.s_transform_inverse(columna)
+            transformed_mat_T[i] = aux
 
         # Transponer de nuevo para obtener la matriz final
-#        final_mat = transformed_mat_T.T
+        final_mat = transformed_mat_T.T
         final_mat = transformed_mat
         return final_mat
 
