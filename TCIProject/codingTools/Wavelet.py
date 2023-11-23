@@ -24,7 +24,7 @@ class Wavelet:
         assert len(X) % 2 == 0, "La longitud de X debe ser par"
 
         n = len(X) // 2
-        L = [X[2*i+1] + int(int(X[2*i] - X[2*i+1])/2) for i in range(n)]
+        L = [X[2*i+1] + int((X[2*i] - X[2*i+1])//2) for i in range(n)]
         H = [X[2*i] - X[2*i+1] for i in range(n)]
 
         return np.concatenate((L, H))
@@ -39,13 +39,13 @@ class Wavelet:
         X_prime = np.zeros_like(Y)
 
         for i in range(n):
-            X_prime[2*i] = H[i] + L[i] - int((H[i]/2))
-            X_prime[2*i+1] = L[i] - int((H[i]/2))
+            X_prime[2*i] = H[i] + L[i] - (H[i] // 2)
+            X_prime[2*i+1] = L[i] - (H[i] // 2)
 
             # Si el valor es mayor que 255, restar 255
-            if X_prime[2*i] > 256:
+            if X_prime[2*i] > 255:
                 X_prime[2*i] -= 256
-            if X_prime[2*i+1] > 256:
+            if X_prime[2*i+1] > 255:
                 X_prime[2*i+1] -= 256
 
         return X_prime
@@ -61,7 +61,7 @@ class Wavelet:
             img_aux = aux[:mitad, :mitad]
 
         # Bucle for de juntar todas las matrices
-        return(ret_img)
+        return ret_img
 
     def handle_transform_forward_rec(self, image):
         len_original_img = len(image)
@@ -72,14 +72,13 @@ class Wavelet:
             transformed_mat[i] = aux
 
         # Columnas
-#        transformed_mat_T = transformed_mat.T
-#        for i, columna in enumerate(transformed_mat_T):
-#            aux = self.s_tranform_forward(columna)
-#            transformed_mat_T[i] = aux
+        transformed_mat_T = np.transpose(transformed_mat)
+        for i, columna in enumerate(transformed_mat_T):
+            aux = self.s_tranform_forward(columna)
+            transformed_mat_T[i] = aux
 
         # Transponer de nuevo para obtener la matriz final
-#        final_mat = transformed_mat_T.T
-        final_mat = transformed_mat
+        final_mat = np.transpose(transformed_mat_T)
         return final_mat
 
     def handle_transform_inverse(self):
@@ -98,13 +97,6 @@ class Wavelet:
 
         return original_img_3d
 
-    # Caso 1 ( 1 level )
-    # 512 -> length = 512,
-    # Caso 2 ( 2 levels )
-    # 512 -> length = 256 -> length = 512
-    # Caso 4 ( 4 levels ) -> 3 - 2 - 1 - 0
-    # 512 -> 64 ->
-
     def handle_transform_inverse_rec(self, image):
         len_original_img = len(image)
         transformed_mat = np.empty((len_original_img,len_original_img), dtype=np.int16)
@@ -114,14 +106,13 @@ class Wavelet:
             transformed_mat[i] = aux
 
         # Columnas
-#        transformed_mat_T = transformed_mat.T
-#        for i, columna in enumerate(transformed_mat_T):
-#            aux = self.s_transform_inverse(columna)
-#            transformed_mat_T[i] = aux
+        transformed_mat_T = np.transpose(transformed_mat)
+        for i, columna in enumerate(transformed_mat_T):
+            aux = self.s_transform_inverse(columna)
+            transformed_mat_T[i] = aux
 
         # Transponer de nuevo para obtener la matriz final
-#        final_mat = transformed_mat_T.T
-        final_mat = transformed_mat
+        final_mat = np.transpose(transformed_mat_T)
         return final_mat
 
 #%%
