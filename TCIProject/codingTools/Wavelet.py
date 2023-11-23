@@ -71,8 +71,6 @@ class Wavelet:
             aux = self.s_tranform_forward(fila)
             transformed_mat[i] = aux
 
-        print(f"Longitud forward: {len(transformed_mat)}")
-
         # Columnas
 #        transformed_mat_T = transformed_mat.T
 #        for i, columna in enumerate(transformed_mat_T):
