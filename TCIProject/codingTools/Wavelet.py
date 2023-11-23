@@ -19,62 +19,37 @@ class Wavelet:
     def get_levels(self):
         return self.levels
 
-    def s_tranform_forward(self, input_array):
-        # Asegurarse de que X es un array de numpy
-        if not isinstance(input_array, np.ndarray):
-            input_array = np.array(input_array)
+    def s_tranform_forward(self, X):
+        # Asegurarse de que la longitud de X es par
+        assert len(X) % 2 == 0, "La longitud de X debe ser par"
 
-        # Comprobar que la longitud de X es par
-        if len(input_array) % 2 != 0:
-            raise ValueError("La longitud de X debe ser par")
+        n = len(X) // 2
+        L = [X[2*i+1] + int(int(X[2*i] - X[2*i+1])/2) for i in range(n)]
+        H = [X[2*i] - X[2*i+1] for i in range(n)]
 
-        # Inicializar L y H como listas vacías
-        L = []
-        H = []
-
-        # Rango del bucle for
-        for_range = int(len(input_array) / 2)
-
-        # Calcular L y H usando un bucle for
-        for n in range(0, for_range):
-            L_data = int(input_array[2 * n + 1] + (int((input_array[2 * n] - input_array[2 * n + 1]) / 2)))
-            L.append(L_data)
-            H.append(int(input_array[2 * n] - input_array[2 * n + 1]))
-
-        # Convertir L y H a arrays de numpy
-        L = np.array(L)
-        H = np.array(H)
-
-        # Devolver un solo array con L y H concatenados
         return np.concatenate((L, H))
 
-    def s_transform_inverse(self, input_array):
-        # Asegurarse de que X es un array de numpy
-        if not isinstance(input_array, np.ndarray):
-            input_array = np.array(input_array)
+    def s_transform_inverse(self, Y):
+        # Asegurarse de que la longitud de Y es par
+        assert len(Y) % 2 == 0, "La longitud de Y debe ser par"
 
-        # Comprobar que la longitud de X es par
-        if len(input_array) % 2 != 0:
-            raise ValueError("La longitud de X debe ser par")
+        n = len(Y) // 2
+        L = Y[:n]
+        H = Y[n:]
+        X_prime = np.zeros_like(Y)
 
-        # Inicializar X' como una lista vacía
-        X_prime = []
+        for i in range(n):
+            X_prime[2*i] = H[i] + L[i] - int((H[i]/2))
+            X_prime[2*i+1] = L[i] - int((H[i]/2))
 
-        # Rango del bucle for
-        for_range = int(len(input_array) / 2)
+            # Si el valor es mayor que 255, restar 255
+            if X_prime[2*i] > 256:
+                X_prime[2*i] -= 256
+            if X_prime[2*i+1] > 256:
+                X_prime[2*i+1] -= 256
 
-        # Calcular X' usando un bucle for
-        for n in range(0, for_range):
-            X_prime_data_1 = int(input_array[n + for_range] + input_array[n] - int(input_array[n + for_range] / 2))
-            X_prime_data_2 = int(input_array[n] - int(input_array[n + for_range] / 2))
-            X_prime.append(X_prime_data_1)
-            X_prime.append(X_prime_data_2)
-
-        # Convertir X' a un array de numpy
-        X_prime = np.array(X_prime)
-
-        # Devolver X'
         return X_prime
+
 
     def handle_transform_forward(self):
         img_aux = self.image[0]
@@ -99,13 +74,13 @@ class Wavelet:
         print(f"Longitud forward: {len(transformed_mat)}")
 
         # Columnas
-        transformed_mat_T = transformed_mat.T
-        for i, columna in enumerate(transformed_mat_T):
-            aux = self.s_tranform_forward(columna)
-            transformed_mat_T[i] = aux
+#        transformed_mat_T = transformed_mat.T
+#        for i, columna in enumerate(transformed_mat_T):
+#            aux = self.s_tranform_forward(columna)
+#            transformed_mat_T[i] = aux
 
         # Transponer de nuevo para obtener la matriz final
-        final_mat = transformed_mat_T.T
+#        final_mat = transformed_mat_T.T
         final_mat = transformed_mat
         return final_mat
 
@@ -141,13 +116,13 @@ class Wavelet:
             transformed_mat[i] = aux
 
         # Columnas
-        transformed_mat_T = transformed_mat.T
-        for i, columna in enumerate(transformed_mat_T):
-            aux = self.s_transform_inverse(columna)
-            transformed_mat_T[i] = aux
+#        transformed_mat_T = transformed_mat.T
+#        for i, columna in enumerate(transformed_mat_T):
+#            aux = self.s_transform_inverse(columna)
+#            transformed_mat_T[i] = aux
 
         # Transponer de nuevo para obtener la matriz final
-        final_mat = transformed_mat_T.T
+#        final_mat = transformed_mat_T.T
         final_mat = transformed_mat
         return final_mat
 
