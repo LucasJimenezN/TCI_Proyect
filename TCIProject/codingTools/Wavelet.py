@@ -36,7 +36,7 @@ class Wavelet:
         n = len(Y) // 2
         L = Y[:n]
         H = Y[n:]
-        X_prime = np.zeros_like(Y)
+        X_prime = np.zeros_like(Y, dtype=np.int16)
 
         for i in range(n):
             X_prime[2*i] = int(H[i]) + int(L[i]) - int(int(H[i]) // 2)
@@ -93,7 +93,7 @@ class Wavelet:
         return original_img_3d
 
     def handle_transform_inverse_rec(self, image):
-        len_original_img = len(image)
+        len_original_img = int(len(image))
         mat_aux = np.copy(image)
         transformed_mat = np.empty((len_original_img,len_original_img), dtype=np.int16)
         # Filas
