@@ -24,8 +24,8 @@ class Wavelet:
         assert len(X) % 2 == 0, "La longitud de X debe ser par"
 
         n = len(X) // 2
-        L = [X[2*i+1] + int((X[2*i] - X[2*i+1])//2) for i in range(n)]
-        H = [X[2*i] - X[2*i+1] for i in range(n)]
+        L = [int(X[2*i+1]) + int((int(X[2*i]) - int(X[2*i+1]))//2) for i in range(n)]
+        H = [int(X[2*i]) - int(X[2*i+1]) for i in range(n)]
 
         return np.concatenate((L, H))
 
@@ -39,20 +39,14 @@ class Wavelet:
         X_prime = np.zeros_like(Y)
 
         for i in range(n):
-            X_prime[2*i] = H[i] + L[i] - (H[i] // 2)
-            X_prime[2*i+1] = L[i] - (H[i] // 2)
-
-            # Si el valor es mayor que 255, restar 255
-            if X_prime[2*i] > 255:
-                X_prime[2*i] -= 256
-            if X_prime[2*i+1] > 255:
-                X_prime[2*i+1] -= 256
+            X_prime[2*i] = int(H[i]) + int(L[i]) - int(int(H[i]) // 2)
+            X_prime[2*i+1] = int(L[i]) - int(int(H[i]) // 2)
 
         return X_prime
 
 
     def handle_transform_forward(self):
-        img_aux = self.image[0]
+        img_aux = np.copy(self.image[0])
         ret_img = np.zeros((len(img_aux),len(img_aux)), dtype=np.int16)
         for i in range(0, self.levels):
             aux = self.handle_transform_forward_rec(img_aux)
@@ -65,33 +59,34 @@ class Wavelet:
 
     def handle_transform_forward_rec(self, image):
         len_original_img = len(image)
+        mat_aux = np.copy(image)
         transformed_mat = np.zeros((len_original_img,len_original_img), dtype=np.int16)
         # Filas
-        for i, fila in enumerate(image):
+        for i, fila in enumerate(mat_aux):
             aux = self.s_tranform_forward(fila)
             transformed_mat[i] = aux
 
         # Columnas
         transformed_mat_T = np.transpose(transformed_mat)
+        final_mat = np.zeros((len_original_img,len_original_img), dtype=np.int16)
         for i, columna in enumerate(transformed_mat_T):
             aux = self.s_tranform_forward(columna)
-            transformed_mat_T[i] = aux
+            final_mat[i] = aux
 
         # Transponer de nuevo para obtener la matriz final
-        final_mat = np.transpose(transformed_mat_T)
+#        final_mat = np.transpose(transformed_mat_T)
+#        final_mat = transformed_mat
         return final_mat
 
     def handle_transform_inverse(self):
-        original_img = self.image
+        original_img = np.copy(self.image)
 
         for i in range((self.levels-1), -1, -1):
-            length = int(len(self.image) / pow(2, i))
+            length = int(len(self.image) // pow(2, i))
 
-            mat_aux = np.zeros((length, length), dtype=np.int16)
-
-            mat_aux[:length, :length] = original_img[:length, :length]
-            aux = self.handle_transform_inverse_rec(mat_aux)
-            original_img[:length, :length] = aux
+            mat_aux = np.copy(original_img[:length, :length])
+            aux = np.copy(self.handle_transform_inverse_rec(mat_aux))
+            original_img[:length, :length] = np.copy(aux)
 
         original_img_3d = np.expand_dims(original_img, axis=0)
 
@@ -99,20 +94,23 @@ class Wavelet:
 
     def handle_transform_inverse_rec(self, image):
         len_original_img = len(image)
+        mat_aux = np.copy(image)
         transformed_mat = np.empty((len_original_img,len_original_img), dtype=np.int16)
         # Filas
-        for i, fila in enumerate(image):
+        for i, fila in enumerate(mat_aux):
             aux = self.s_transform_inverse(fila)
             transformed_mat[i] = aux
 
         # Columnas
         transformed_mat_T = np.transpose(transformed_mat)
+        final_mat = np.empty((len_original_img, len_original_img), dtype=np.int16)
         for i, columna in enumerate(transformed_mat_T):
             aux = self.s_transform_inverse(columna)
-            transformed_mat_T[i] = aux
+            final_mat[i] = np.copy(aux)
 
         # Transponer de nuevo para obtener la matriz final
-        final_mat = np.transpose(transformed_mat_T)
+#        final_mat = np.transpose(transformed_mat_T)
+#        final_mat = transformed_mat
         return final_mat
 
 #%%
