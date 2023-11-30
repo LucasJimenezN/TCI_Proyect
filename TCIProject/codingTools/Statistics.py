@@ -36,7 +36,7 @@ class statistics:
     
     #compute metrics    
     def compute_entropy(self):
-   
+        
         histogram = {}
         #histogram[self.image[z][y][x]]
         #TO BE IMPLEMENTED
