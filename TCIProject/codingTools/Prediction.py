@@ -21,23 +21,23 @@ class Prediction:
             for j in range(self.image.shape[1]):
                 if i == 0 and j == 0:
                     prediction = 0
-                
-                else:  
+
+                else:
                     if i == 0:
-                        #Cuando estamos en la primera fila solo podremos utilizar los pixeles de la izquierda
-                        prediction = self.image[i, j-1]
+                        # Cuando estamos en la primera fila solo podremos utilizar los pixeles de la izquierda
+                        prediction = self.image[i, j - 1]
 
                     elif j == 0:
-                        prediction = self.image[i-1, j]
+                        prediction = self.image[i - 1, j]
 
                     else:
                         # Predecir el valor del pixel actual basándose en los pixels vecinos
-                        prediction = int((self.image[i-1, j-1] + self.image[i-1, j]*2 +
-                                       self.image[i, j-1]*2)/5)
+                        prediction = int((self.image[i - 1, j - 1] + self.image[i - 1, j] * 2 +
+                                          self.image[i, j - 1] * 2) / 5)
 
                 # Calcular el residual como la diferencia entre el valor real y la predicción
                 residual[i, j] = self.image[i, j] - prediction
-                
+
                 '''if i > 1 and j > 1:
                     # Predecir el valor del pixel actual basándose en los pixels vecinos
                     prediction = ((self.image[i-2, j-2] + 2*self.image[i-2, j-1] + 3*self.image[i-2, j] +
@@ -63,6 +63,7 @@ class Prediction:
 
         return return_img
 
+
 def invert_image(predicted):
     # Asumiendo que la imagen residual es una matriz 2D de numpy
     residual = predicted[0]
@@ -73,20 +74,17 @@ def invert_image(predicted):
     for i in range(residual.shape[0]):
         for j in range(residual.shape[1]):
             if i == 0 and j == 0:
-                original[i, j] = residual[i,j]
-            else:  
+                original[i, j] = residual[i, j]
+            else:
                 if i == 0:
-                    prediction = original[i, j-1]
+                    prediction = original[i, j - 1]
                 elif j == 0:
-                    prediction = original[i-1, j]
+                    prediction = original[i - 1, j]
                 else:
-                    prediction = int((original[i-1, j-1] + original[i-1, j]*2 +
-                                   original[i, j-1]*2)/5)
+                    prediction = int((original[i - 1, j - 1] + original[i - 1, j] * 2 +
+                                      original[i, j - 1] * 2) / 5)
                 original[i, j] = residual[i, j] + prediction
-                
+
     return_img = np.expand_dims(original, axis=0)
-    
+
     return return_img
-
-
-
